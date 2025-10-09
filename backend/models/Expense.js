@@ -10,4 +10,6 @@ const ExpenseSchema = new mongoose.Schema({
     category: String,
     date: Date,
     notes: String
-}, {timestamps: true})
+}, {timestamps: true});
+
+module.exports = mongoose.model("Expense", ExpenseSchema);
