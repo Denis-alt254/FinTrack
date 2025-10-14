@@ -43,3 +43,38 @@ const Register = async(req, res) => {
         res.status(500).json("Internal Server Error.");
     }
 }
+
+const Login = async(req, res) => {
+    const {username, password} = req.body;
+
+    if(!username || !password){
+        return res.status(400).json({message: "Username and password required."})
+    }
+
+    try {
+        const user = await User.findOne({username});
+
+        if(!user){
+            return res.status(401).json({message: "Invalid Credentials."});
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+
+        if(!match){
+            return res.status(401).json({message: "Invalid Credentials."});
+        }
+
+        //payload
+        const payload = {userId: user._id, username: user.username};
+
+        //token
+        const token = jwt.sign(payload, secretKey, {expiresIn: "1h"});
+
+        res.status(200).json({message: "Login Successfully.", token});
+    } catch (error) {
+        console.error({error: message.error});
+        res.status(500).json({error: "Internal Server Error."});
+    }
+}
+
+module.exports = {Register, Login};
