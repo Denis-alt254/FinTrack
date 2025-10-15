@@ -5,7 +5,7 @@ require("dotenv").config();
 const secretKey = process.env.SECRETKEY;
 
 const Register = async(req, res) => {
-    const {username, email, password} = req.body;
+    const {username, email, password, subscriptionStatus} = req.body;
     const saltRounds = 10;
 
     if(!username || !email || !password){
@@ -19,12 +19,13 @@ const Register = async(req, res) => {
             return res.status(409).json({error: "User already exist."});
         }
 
-        const hashedPassword = bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        const newUser = ({
+        const newUser = new User({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            subscriptionStatus
         });
 
         const savedUser = await newUser.save();
@@ -77,4 +78,17 @@ const Login = async(req, res) => {
     }
 }
 
-module.exports = {Register, Login};
+const getAllUsers = async(req, res) => {
+    try {
+        const users = await User.find();
+        if(!users || users === 0){
+            return res.status(404).json({error: "Users not Found"});
+        }
+        res.json(users);
+    } catch (error) {
+        console.error("Error Getting Users: ", error);
+        res.status(500).json({error: error.message});
+    }
+}
+
+module.exports = {Register, Login, getAllUsers};
