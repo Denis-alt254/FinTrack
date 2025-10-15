@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const router = require("./routes/userRouter");
+const AuthRouter = require("./routes/userRouter");
+const ExpenseRouter = require("./routes/ExpenseRouter");
 require("dotenv").config();
 const app = express();
 
@@ -13,7 +14,8 @@ const PORT = 5000;
 connectDB();
 
 //routes
-app.use('api/users', router);
+app.use('/api/users', AuthRouter);
+app.use('/api/expense', ExpenseRouter);
 
 app.listen(process.env.PORT||PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
