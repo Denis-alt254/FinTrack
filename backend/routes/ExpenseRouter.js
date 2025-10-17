@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get('/', protect, GetAllExpense);
 router.post('/', protect, AddExpense);
-router.put('/', protect, EditExpense);
+router.put('/:id', protect, EditExpense);
 
 module.exports = router;
