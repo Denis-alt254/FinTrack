@@ -2,8 +2,7 @@ const Expense = require("../models/Expense");
 
 const GetAllExpense = async(req, res) => {
     try {
-        const userId = req.user.userId;
-        const expense = await Expense.findById({userId: userId});
+        const expense = await Expense.find()
         if(!expense){
             return res.status(404).json({error: "No expense found."})
         }
@@ -37,15 +36,17 @@ const AddExpense = async(req, res) => {
 
 const EditExpense = async(req, res) => {
     try {
-        const userId = req.user.userId;
-        const expense = await Expense.findByIdAndUpdate({userId});
+        const expenseId = req.params.id;
+
+        const expense = await Expense.findById(expenseId);
         if(!expense){
             return res.status(404).json("Expense not found.")
         }
-        const {title, amount, category, date, notes} = req.body;
-        const updatedExpense = expense({title, amount, category, date, notes});
-        const savedExpense = await updatedExpense.save();
-        res.status(200).json(savedExpense);
+
+        Object.assign(expense, req.body);
+        await expense.save();
+        
+        res.status(200).json(expense);
     } catch (error) {
         console.error("Error editing expense.", error);
         res.status(500).json({error: error.message});
