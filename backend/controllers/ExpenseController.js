@@ -53,4 +53,13 @@ const EditExpense = async(req, res) => {
     }
 }
 
-module.exports = {AddExpense, EditExpense, GetAllExpense};
+const DeleteExpense = async(req, res) => {
+    try {
+        const expense = await Expense.findByIdAndDelete(req.params.id);
+        res.status(204).json();        
+    } catch (error) {
+        res.status(404).json({message: error.message});
+    }
+}
+
+module.exports = {AddExpense, EditExpense, GetAllExpense, DeleteExpense};
