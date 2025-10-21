@@ -62,4 +62,21 @@ const DeleteExpense = async(req, res) => {
     }
 }
 
-module.exports = {AddExpense, EditExpense, GetAllExpense, DeleteExpense};
+const FilterExpense = async(req, res) => {
+    try {
+        const {category} = req.query;
+
+        if(!category){
+            return res.status(400).json({error: "Missing category for filtering"});
+        }
+
+        const filter = {category};
+        const expense = await Expense.find(filter);
+
+        res.status(200).json(expense);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
+module.exports = {AddExpense, EditExpense, GetAllExpense, DeleteExpense, FilterExpense};
